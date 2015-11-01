@@ -20,6 +20,7 @@ namespace Junkosoft
 		private System.Windows.Forms.Label TimeLabel;
 		private System.ComponentModel.IContainer components;
 		#endregion
+        private static System.Drawing.Size initialSize = new System.Drawing.Size(200, 100);
 
 		#region Constructors
 		public Clock()
@@ -47,6 +48,9 @@ namespace Junkosoft
 			this.timer1 = new System.Windows.Forms.Timer(this.components);
 			this.TimeLabel = new System.Windows.Forms.Label();
 			this.SuspendLayout();
+
+			this.Controls.Add(this.TimeLabel);
+			this.Controls.Add(this.DateLabel);
 			// 
 			// DateLabel
 			// 
@@ -79,27 +83,49 @@ namespace Junkosoft
 			// 
 			this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
 			this.BackColor = System.Drawing.Color.Black;
-			this.ClientSize = new System.Drawing.Size(800, 296);
-			this.ControlBox = false;
-			this.Controls.Add(this.TimeLabel);
-			this.Controls.Add(this.DateLabel);
+			this.ClientSize = initialSize;
+			this.ControlBox = true;
 			this.ForeColor = System.Drawing.Color.Red;
-			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
+			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.Sizable;
 			this.Name = "Clock";
 			this.ShowInTaskbar = false;
 			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
 			this.Text = "Clock";
 			this.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.Form1_KeyPress);
-			this.ResumeLayout(false);
+            this.Resize += Form1_Resize;
+            this.Shown += Form1_Resize;
+			this.ResumeLayout(true);
 
 		}
 		#endregion
 
+        private void Form1_Resize(object sender, System.EventArgs e)
+        {
+            var me = (Form)sender;
+            double r1 = (double)me.ClientSize.Height / initialSize.Height;
+            double r2 = (double)me.ClientSize.Width / initialSize.Width;
+
+            double r = Math.Min(r1, r2);
+
+            var f = new System.Drawing.Font("Microsoft Sans Serif", (float)r * initialSize.Height / 2.3f, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel, ((System.Byte)(0)));
+            DateLabel.Font = f;
+            TimeLabel.Font = f;
+            DateLabel.Height = f.Height;
+            TimeLabel.Height = f.Height;
+            DateLabel.Width = me.Width;
+            TimeLabel.Width = me.Width;
+            var qq = me.ClientSize.Height;
+            qq -= DateLabel.Height + TimeLabel.Height;
+            qq /= 2;
+            DateLabel.Top = qq;
+            TimeLabel.Top = qq + DateLabel.Height;
+        }
+
 		#region Control Events
 		private void timer1_Tick(object sender, System.EventArgs e)
 		{
-			DateLabel.Text = DateTime.Now.ToString("MM-dd-yyyy");
-			TimeLabel.Text = DateTime.Now.ToString("hh:mm:ss tt");
+			DateLabel.Text = DateTime.Now.ToString("MM-dd-yy");
+			TimeLabel.Text = DateTime.Now.ToString("HH:mm:ss");
 
 		}
 
