@@ -124,7 +124,7 @@ namespace Junkosoft
 		#region Control Events
 		private void timer1_Tick(object sender, System.EventArgs e)
 		{
-			DateLabel.Text = DateTime.Now.ToString("MM-dd-yy");
+			DateLabel.Text = DateTime.Now.ToString("dd-MM-yy");
 			TimeLabel.Text = DateTime.Now.ToString("HH:mm:ss");
 
 		}
