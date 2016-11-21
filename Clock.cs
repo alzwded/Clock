@@ -88,7 +88,7 @@ namespace Junkosoft
 			this.ForeColor = System.Drawing.Color.Red;
 			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.Sizable;
 			this.Name = "Clock";
-			this.ShowInTaskbar = false;
+			this.ShowInTaskbar = true;
 			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
 			this.Text = "Clock";
 			this.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.Form1_KeyPress);
@@ -96,6 +96,17 @@ namespace Junkosoft
             this.Shown += Form1_Resize;
 			this.ResumeLayout(true);
 
+            System.EventHandler maxMin = (sender, e) =>
+                    this.WindowState = 
+                        (this.WindowState == FormWindowState.Maximized)
+                        ? FormWindowState.Normal
+                        : FormWindowState.Maximized;
+
+            this.DoubleClick += maxMin;
+            foreach(Control ctrl in this.Controls)
+            {
+                ctrl.DoubleClick += maxMin;
+            }
 		}
 		#endregion
 
@@ -106,6 +117,7 @@ namespace Junkosoft
             double r2 = (double)me.ClientSize.Width / initialSize.Width;
 
             double r = Math.Min(r1, r2);
+            if(r < 1.0e-7) return;
 
             var f = new System.Drawing.Font("Microsoft Sans Serif", (float)r * initialSize.Height / 2.3f, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel, ((System.Byte)(0)));
             DateLabel.Font = f;
