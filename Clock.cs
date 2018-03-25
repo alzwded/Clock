@@ -1,28 +1,24 @@
-namespace Junkosoft
+namespace Clock
 {
-	#region Namespaces
 	using System;
 	using System.Drawing;
 	using System.Collections;
 	using System.ComponentModel;
 	using System.Windows.Forms;
 	using System.Data;
-	#endregion
+    using System.Resources;
 
 	/// <summary>
 	/// Clock
 	/// </summary>
 	public class Clock : System.Windows.Forms.Form
 	{
-		#region Controls
 		private System.Windows.Forms.Timer timer1;
 		private System.Windows.Forms.Label DateLabel;
 		private System.Windows.Forms.Label TimeLabel;
 		private System.ComponentModel.IContainer components;
-		#endregion
         private static System.Drawing.Size initialSize = new System.Drawing.Size(200, 100);
 
-		#region Constructors
 		public Clock()
 		{
 			//
@@ -33,10 +29,30 @@ namespace Junkosoft
 			//
 			// TODO: Add any constructor code after InitializeComponent call
 			//
-		}
-		#endregion
 
-		#region Windows Form Designer generated code
+            StartPosition = FormStartPosition.WindowsDefaultLocation;
+            Properties.Settings.Default.Upgrade();
+            int left, top;
+            if(Properties.Settings.Default.Left != ""
+                && int.TryParse(Properties.Settings.Default.Left, out left))
+            {
+                Left = left;
+                StartPosition = FormStartPosition.Manual;
+            }
+            if(Properties.Settings.Default.Top != ""
+                && int.TryParse(Properties.Settings.Default.Top, out top))
+            {
+                Top = top;
+                StartPosition = FormStartPosition.Manual;
+            }
+
+            this.Move += (sender, e) =>
+            {
+                Properties.Settings.Default.Left = Left.ToString();
+                Properties.Settings.Default.Top = Top.ToString();
+            };
+		}
+
 		/// <summary>
 		/// Required method for Designer support - do not modify
 		/// the contents of this method with the code editor.
@@ -96,6 +112,11 @@ namespace Junkosoft
             this.Shown += Form1_Resize;
 			this.ResumeLayout(true);
 
+            this.FormClosing += (sender, e) =>
+            {
+                Properties.Settings.Default.Save();
+            };
+
             System.EventHandler maxMin = (sender, e) =>
                     this.WindowState = 
                         (this.WindowState == FormWindowState.Maximized)
@@ -108,7 +129,6 @@ namespace Junkosoft
                 ctrl.DoubleClick += maxMin;
             }
 		}
-		#endregion
 
         private void Form1_Resize(object sender, System.EventArgs e)
         {
@@ -133,21 +153,23 @@ namespace Junkosoft
             TimeLabel.Top = qq + DateLabel.Height;
         }
 
-		#region Control Events
 		private void timer1_Tick(object sender, System.EventArgs e)
 		{
 			DateLabel.Text = DateTime.Now.ToString("dd-MM-yy");
 			TimeLabel.Text = DateTime.Now.ToString("HH:mm:ss");
-
 		}
 
 		private void Form1_KeyPress(object sender, KeyPressEventArgs e)
 		{
-			this.Close();
+            if(e.KeyChar == (char)13)
+            {
+                this.WindowState =
+                    (this.WindowState == FormWindowState.Maximized)
+                    ? FormWindowState.Normal
+                    : FormWindowState.Maximized;
+            }
 		}
-		#endregion
 
-		#region Public Methods
 		/// <summary>
 		/// The main entry point for the application.
 		/// </summary>
@@ -156,9 +178,7 @@ namespace Junkosoft
 		{
 			Application.Run(new Clock());
 		}
-		#endregion
 
-		#region Protected Methods
 		/// <summary>
 		/// Clean up any resources being used.
 		/// </summary>
@@ -173,6 +193,5 @@ namespace Junkosoft
 			}
 			base.Dispose( disposing );
 		}
-		#endregion
 	}
 }
